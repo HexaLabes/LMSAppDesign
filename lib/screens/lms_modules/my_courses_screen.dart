@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../models/mock_courses_data.dart';
 import '../../theme/app_theme.dart';
-import 'course_progress_screen.dart';
+import '../courses/course_detail_screen.dart';
+import '../courses/course_module_screen.dart';
+import '../courses/courses_hub_screen.dart';
+import '../courses/scorm_player_screen.dart';
 
 class MyCoursesScreen extends StatelessWidget {
   const MyCoursesScreen({super.key});
@@ -9,49 +13,7 @@ class MyCoursesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    final courses = [
-      {
-        'title': 'Web Development (Full Stack)',
-        'category': 'Computer Science & Software',
-        'progress': 0.72,
-        'modules': 16,
-        'lessons': 48,
-        'instructor': 'Engr. M. Farooq',
-        'color': const Color(0xFF0F44B8),
-        'icon': Icons.code_rounded,
-      },
-      {
-        'title': 'IELTS Academic Preparation',
-        'category': 'Language & Communication',
-        'progress': 0.85,
-        'modules': 8,
-        'lessons': 24,
-        'instructor': 'Sarah Jenkins',
-        'color': const Color(0xFF165B3B),
-        'icon': Icons.translate_rounded,
-      },
-      {
-        'title': 'Advanced Problem Solving',
-        'category': 'Algorithms & Logic',
-        'progress': 0.40,
-        'modules': 12,
-        'lessons': 36,
-        'instructor': 'Dr. Usman Tariq',
-        'color': const Color(0xFFE95D34),
-        'icon': Icons.psychology_rounded,
-      },
-      {
-        'title': 'Elementary Level 50 & 60WPM',
-        'category': 'Professional Skills',
-        'progress': 0.60,
-        'modules': 6,
-        'lessons': 18,
-        'instructor': 'Ayesha Khan',
-        'color': const Color(0xFF8B5CF6),
-        'icon': Icons.keyboard_rounded,
-      },
-    ];
+    final courses = MockCoursesData.courses;
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkBg : AppColors.lightBg,
@@ -64,6 +26,19 @@ class MyCoursesScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_ios_new, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.explore_outlined),
+            tooltip: 'Course Catalog',
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const CoursesHubScreen(initialTabIndex: 1),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: SafeArea(
         child: ListView(
@@ -71,48 +46,62 @@ class MyCoursesScreen extends StatelessWidget {
           children: [
             // Header Card
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
                   colors: [Color(0xFF0F44B8), Color(0xFF1E5CD8)],
                 ),
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF0F44B8).withAlpha(isDark ? 80 : 40),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.local_library_rounded, color: Colors.white, size: 24),
-                  const SizedBox(width: 12),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'ENROLLED COURSES',
-                        style: GoogleFonts.inter(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withAlpha(40),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.school_rounded, color: Colors.white, size: 26),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'MY ENROLLED COURSES',
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                            letterSpacing: 0.5,
+                          ),
                         ),
-                      ),
-                      Text(
-                        'Continue learning from where you left off',
-                        style: GoogleFonts.inter(
-                          fontSize: 11.5,
-                          color: Colors.white.withAlpha(210),
+                        Text(
+                          'Access your lectures, SCORM modules and exams',
+                          style: GoogleFonts.inter(
+                            fontSize: 11.5,
+                            color: Colors.white.withAlpha(220),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 18),
+            const SizedBox(height: 20),
 
-            ...courses.map((c) {
-              final progress = c['progress'] as double;
-              final color = c['color'] as Color;
-
+            ...courses.map((course) {
               return Container(
-                margin: const EdgeInsets.only(bottom: 16),
+                margin: const EdgeInsets.only(bottom: 18),
                 decoration: BoxDecoration(
                   color: isDark ? AppColors.darkCardBg : Colors.white,
                   borderRadius: BorderRadius.circular(18),
@@ -127,137 +116,183 @@ class MyCoursesScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Top banner style
-                    Container(
-                      height: 80,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: color.withAlpha(isDark ? 40 : 25),
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => CourseDetailScreen(course: course),
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
+                    );
+                  },
+                  borderRadius: BorderRadius.circular(18),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Banner thumbnail with badge
+                      Stack(
                         children: [
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: color,
-                              borderRadius: BorderRadius.circular(12),
+                          ClipRRect(
+                            borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
+                            child: Image.network(
+                              course.thumbnailUrl,
+                              height: 120,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => Container(height: 120, color: const Color(0xFF0F44B8)),
                             ),
-                            child: Icon(c['icon'] as IconData, color: Colors.white, size: 24),
                           ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                          Positioned(
+                            top: 10,
+                            left: 10,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF0F44B8),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                course.category,
+                                style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white),
+                              ),
+                            ),
+                          ),
+                          if (course.hasScorm)
+                            Positioned(
+                              top: 10,
+                              right: 10,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF38BDF8),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  'SCORM 1.2',
+                                  style: GoogleFonts.inter(fontSize: 9.5, fontWeight: FontWeight.w800, color: Colors.black87),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              course.title,
+                              style: GoogleFonts.inter(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                                color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Instructor: ${course.instructorName}',
+                              style: GoogleFonts.inter(
+                                fontSize: 12,
+                                color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+
+                            // Progress row
+                            Row(
                               children: [
-                                Text(
-                                  c['category'] as String,
-                                  style: GoogleFonts.inter(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600,
-                                    color: color,
+                                Expanded(
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(4),
+                                    child: LinearProgressIndicator(
+                                      value: course.progress,
+                                      backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
+                                      valueColor: const AlwaysStoppedAnimation(Color(0xFF10B981)),
+                                      minHeight: 6,
+                                    ),
                                   ),
                                 ),
+                                const SizedBox(width: 10),
                                 Text(
-                                  c['title'] as String,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
+                                  '${(course.progress * 100).toInt()}%',
                                   style: GoogleFonts.inter(
-                                    fontSize: 16,
+                                    fontSize: 12,
                                     fontWeight: FontWeight.w800,
-                                    color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                                    color: const Color(0xFF10B981),
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
+                            const SizedBox(height: 14),
 
-                    // Body details
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Instructor: ${c['instructor']}',
-                                style: GoogleFonts.inter(
-                                  fontSize: 13,
-                                  color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              Text(
-                                '${(progress * 100).toInt()}% Done',
-                                style: GoogleFonts.inter(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w700,
-                                  color: color,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(6),
-                            child: LinearProgressIndicator(
-                              value: progress,
-                              minHeight: 7,
-                              backgroundColor: isDark ? AppColors.darkCardElevated : const Color(0xFFE5E7EB),
-                              valueColor: AlwaysStoppedAnimation<Color>(color),
-                            ),
-                          ),
-                          const SizedBox(height: 14),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(Icons.video_library_outlined, size: 16, color: isDark ? AppColors.darkTextMuted : AppColors.lightTextMuted),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    '${c['modules']} Modules • ${c['lessons']} Lectures',
-                                    style: GoogleFonts.inter(
-                                      fontSize: 12,
-                                      color: isDark ? AppColors.darkTextMuted : AppColors.lightTextMuted,
-                                    ),
+                            // Action buttons
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '${course.modulesCount} Modules • ${course.lecturesCount} Lectures',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 11.5,
+                                    color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                                   ),
-                                ],
-                              ),
-                              ElevatedButton.icon(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (_) => const CourseProgressScreen()),
-                                  );
-                                },
-                                icon: const Icon(Icons.play_circle_fill_rounded, size: 16),
-                                label: const Text('Continue'),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: color,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                                  minimumSize: Size.zero,
-                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                                Row(
+                                  children: [
+                                    if (course.hasScorm) ...[
+                                      OutlinedButton.icon(
+                                        onPressed: () {
+                                          final scormMod = course.modules.firstWhere((m) => m.scormPackage != null, orElse: () => course.modules.first);
+                                          if (scormMod.scormPackage != null) {
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (_) => ScormPlayerScreen(
+                                                  course: course,
+                                                  module: scormMod,
+                                                  scormPackage: scormMod.scormPackage!,
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        icon: const Icon(Icons.extension_rounded, size: 14),
+                                        label: const Text('SCORM'),
+                                        style: OutlinedButton.styleFrom(
+                                          foregroundColor: const Color(0xFF38BDF8),
+                                          side: const BorderSide(color: Color(0xFF38BDF8)),
+                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                          textStyle: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w700),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                    ],
+                                    ElevatedButton.icon(
+                                      onPressed: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (_) => CourseModuleScreen(course: course),
+                                          ),
+                                        );
+                                      },
+                                      icon: const Icon(Icons.play_arrow_rounded, size: 16),
+                                      label: const Text('Modules'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: const Color(0xFF0F44B8),
+                                        foregroundColor: Colors.white,
+                                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                        textStyle: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w700),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             }),
