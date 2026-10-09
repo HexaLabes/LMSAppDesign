@@ -202,7 +202,7 @@ class _AttachmentsScreenState extends State<AttachmentsScreen> {
                 final isUploaded = doc['isUploaded'] as bool;
 
                 return Container(
-                  margin: const EdgeInsets.only(bottom: 12),
+                  margin: const EdgeInsets.only(bottom: 14),
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: isDark ? AppColors.darkCardBg : Colors.white,
@@ -210,78 +210,108 @@ class _AttachmentsScreenState extends State<AttachmentsScreen> {
                     border: Border.all(
                       color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
                     ),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: (isUploaded ? const Color(0xFF10B981) : const Color(0xFFF59E0B)).withAlpha(25),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Icon(
-                          isUploaded ? Icons.description_rounded : Icons.file_upload_outlined,
-                          color: isUploaded ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
-                        ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withAlpha(isDark ? 20 : 8),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
                       ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              doc['title'],
-                              style: GoogleFonts.inter(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                                color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
-                              ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 44,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              color: (isUploaded ? const Color(0xFF10B981) : const Color(0xFFF59E0B)).withAlpha(25),
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            const SizedBox(height: 2),
-                            Text(
-                              isUploaded ? (doc['fileName'] ?? 'Uploaded') : 'Not Uploaded',
-                              style: GoogleFonts.inter(
-                                fontSize: 12,
-                                color: isUploaded ? const Color(0xFF15803D) : const Color(0xFFB45309),
-                                fontWeight: FontWeight.w600,
+                            child: Icon(
+                              isUploaded ? Icons.description_rounded : Icons.file_upload_outlined,
+                              color: isUploaded ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
+                            ),
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  doc['title'],
+                                  style: GoogleFonts.inter(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w700,
+                                    color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                                  ),
+                                ),
+                                const SizedBox(height: 3),
+                                Text(
+                                  isUploaded ? (doc['fileName'] ?? 'Uploaded') : 'Not Uploaded',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 12,
+                                    color: isUploaded ? const Color(0xFF15803D) : const Color(0xFFB45309),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                if (doc['updatedDate'] != null) ...[
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    'Updated: ${doc['updatedDate']}',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 11,
+                                      color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      // Action buttons placed below text on the left side
+                      Padding(
+                        padding: const EdgeInsets.only(left: 58),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            if (isUploaded) ...[
+                              OutlinedButton.icon(
+                                onPressed: () => _viewAttachment(doc),
+                                icon: const Icon(Icons.visibility_rounded, size: 14),
+                                label: const Text('View'),
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: const Color(0xFF0F44B8),
+                                  side: const BorderSide(color: Color(0xFF0F44B8)),
+                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                                  minimumSize: Size.zero,
+                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                  textStyle: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w700),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                            ],
+                            ElevatedButton.icon(
+                              onPressed: () => _showUploadDialog(idx),
+                              icon: Icon(isUploaded ? Icons.sync_rounded : Icons.file_upload_outlined, size: 14),
+                              label: Text(isUploaded ? 'Replace' : 'Upload'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF0F44B8),
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                                minimumSize: Size.zero,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                textStyle: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w700),
                               ),
                             ),
                           ],
-                        ),
-                      ),
-                      if (isUploaded) ...[
-                        OutlinedButton(
-                          onPressed: () => _viewAttachment(doc),
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: Color(0xFF0F44B8)),
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                            minimumSize: Size.zero,
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          ),
-                          child: Text(
-                            'View',
-                            style: GoogleFonts.inter(
-                              color: const Color(0xFF0F44B8),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                      ],
-                      ElevatedButton(
-                        onPressed: () => _showUploadDialog(idx),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF0F44B8),
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                          minimumSize: Size.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        child: Text(
-                          isUploaded ? 'Replace' : 'Upload',
-                          style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700),
                         ),
                       ),
                     ],
