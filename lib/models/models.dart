@@ -34,6 +34,46 @@ class QuestionModel {
   });
 }
 
+class QuestionReviewItem {
+  final String questionText;
+  final List<String> options;
+  final int selectedAnswerIndex;
+  final int correctAnswerIndex;
+  final String explanation;
+
+  QuestionReviewItem({
+    required this.questionText,
+    required this.options,
+    required this.selectedAnswerIndex,
+    required this.correctAnswerIndex,
+    required this.explanation,
+  });
+}
+
+class QuizAttemptResult {
+  final String id;
+  final String quizTitle;
+  final int score;
+  final int totalQuestions;
+  final double percentage;
+  final bool isPassed;
+  final DateTime attemptedAt;
+  final String timeTaken;
+  final List<QuestionReviewItem> questions;
+
+  QuizAttemptResult({
+    required this.id,
+    required this.quizTitle,
+    required this.score,
+    required this.totalQuestions,
+    required this.percentage,
+    required this.isPassed,
+    required this.attemptedAt,
+    required this.timeTaken,
+    required this.questions,
+  });
+}
+
 class FlashcardModel {
   final String id;
   final String term;

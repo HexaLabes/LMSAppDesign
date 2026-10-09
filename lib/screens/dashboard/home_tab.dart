@@ -999,27 +999,32 @@ class _HomeTabState extends State<HomeTab> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'My Enrolled Courses',
-                            style: GoogleFonts.inter(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w800,
-                              color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'My Enrolled Courses',
+                              style: GoogleFonts.inter(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w800,
+                                color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            'Access your syllabus, video lectures and SCORM players',
-                            style: GoogleFonts.inter(
-                              fontSize: 12,
-                              color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                            const SizedBox(height: 2),
+                            Text(
+                              'Access your syllabus, video lectures and resources',
+                              style: GoogleFonts.inter(
+                                fontSize: 12,
+                                color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
+                      const SizedBox(width: 8),
                       TextButton(
                         onPressed: () {
                           Navigator.pop(context);

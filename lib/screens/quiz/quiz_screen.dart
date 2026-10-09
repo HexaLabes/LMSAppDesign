@@ -6,6 +6,7 @@ import '../../models/mock_data.dart';
 import '../../models/models.dart';
 import '../../providers/app_state_provider.dart';
 import '../../theme/app_theme.dart';
+import '../lms_modules/results_screen.dart';
 
 class QuizScreen extends StatefulWidget {
   final String title;
@@ -65,16 +66,42 @@ class _QuizScreenState extends State<QuizScreen> {
   void _finishQuiz() {
     _timer?.cancel();
     int correctCount = 0;
-    _selectedAnswers.forEach((qIndex, selectedOpt) {
-      if (_questions[qIndex].correctIndex == selectedOpt) {
+    final List<QuestionReviewItem> reviewItems = [];
+
+    for (int i = 0; i < _questions.length; i++) {
+      final q = _questions[i];
+      final selected = _selectedAnswers[i] ?? -1;
+      if (selected == q.correctIndex) {
         correctCount++;
       }
-    });
+      reviewItems.add(
+        QuestionReviewItem(
+          questionText: q.question,
+          options: q.options,
+          selectedAnswerIndex: selected,
+          correctAnswerIndex: q.correctIndex,
+          explanation: q.explanation,
+        ),
+      );
+    }
 
-    context.read<AppStateProvider>().recordQuizCompletion(
-      correct: correctCount,
-      total: _questions.length,
+    final percentage = ((correctCount / _questions.length) * 100);
+    final isPassed = percentage >= 70;
+    final timeSpent = 900 - _secondsRemaining;
+
+    final attempt = QuizAttemptResult(
+      id: 'att-${DateTime.now().millisecondsSinceEpoch}',
+      quizTitle: widget.title,
+      score: correctCount,
+      totalQuestions: _questions.length,
+      percentage: percentage,
+      isPassed: isPassed,
+      attemptedAt: DateTime.now(),
+      timeTaken: _formatTime(timeSpent),
+      questions: reviewItems,
     );
+
+    context.read<AppStateProvider>().addQuizAttempt(attempt);
 
     setState(() {
       _isSubmitted = true;
@@ -102,12 +129,12 @@ class _QuizScreenState extends State<QuizScreen> {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                color: (isPassed ? Theme.of(context).primaryColor : AppColors.accentOrange).withAlpha(30),
+                color: (isPassed ? const Color(0xFF10B981) : const Color(0xFFF59E0B)).withAlpha(30),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 isPassed ? Icons.emoji_events_rounded : Icons.replay_rounded,
-                color: isPassed ? Theme.of(context).primaryColor : AppColors.accentOrange,
+                color: isPassed ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
                 size: 40,
               ),
             ),
@@ -125,22 +152,47 @@ class _QuizScreenState extends State<QuizScreen> {
               'You scored $correctCount / ${_questions.length} ($percentage%)',
               style: GoogleFonts.inter(
                 fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: AppColors.accentOrange,
+                fontWeight: FontWeight.w700,
+                color: isPassed ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
             Text(
               isPassed
-                  ? 'Great job! Your readiness and passing probability have improved.'
-                  : 'Review the explanations and try again to improve your readiness.',
+                  ? 'Congratulations! Your score has been recorded in the Results portal.'
+                  : 'Your attempt has been saved. Review your errors and try again!',
               textAlign: TextAlign.center,
               style: GoogleFonts.inter(
-                fontSize: 13.5,
+                fontSize: 13,
                 color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
+
+            // Button to View in Results Tab
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  Navigator.pop(context);
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const ResultsScreen()),
+                  );
+                },
+                icon: const Icon(Icons.assessment_rounded, size: 18),
+                label: const Text('View in Results Tab'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0F44B8),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  textStyle: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w700),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+
             Row(
               children: [
                 Expanded(
@@ -150,15 +202,15 @@ class _QuizScreenState extends State<QuizScreen> {
                       Navigator.pop(context);
                     },
                     style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
-                    child: Text('Done', style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
+                    child: Text('Done', style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 13)),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 10),
                 Expanded(
-                  child: ElevatedButton(
+                  child: OutlinedButton(
                     onPressed: () {
                       Navigator.pop(ctx);
                       setState(() {
@@ -169,13 +221,11 @@ class _QuizScreenState extends State<QuizScreen> {
                         _startTimer();
                       });
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).primaryColor,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
-                    child: Text('Retry', style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
+                    child: Text('Retry', style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 13)),
                   ),
                 ),
               ],
