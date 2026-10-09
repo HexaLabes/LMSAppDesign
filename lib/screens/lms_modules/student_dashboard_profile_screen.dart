@@ -83,7 +83,7 @@ class _StudentDashboardProfileScreenState extends State<StudentDashboardProfileS
       backgroundColor: isDark ? AppColors.darkBg : AppColors.lightBg,
       appBar: AppBar(
         title: Text(
-          'Student Dashboard',
+          'Student Profile',
           style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 18),
         ),
         leading: IconButton(

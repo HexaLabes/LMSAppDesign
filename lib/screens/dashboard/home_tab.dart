@@ -1157,60 +1157,77 @@ class _HomeTabState extends State<HomeTab> {
   void _showAssessmentTestsModal(BuildContext context, bool isDark) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: isDark ? AppColors.darkCardBg : Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Assessment Tests',
-                style: GoogleFonts.inter(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Formative and Summative official assessments',
-                style: GoogleFonts.inter(
-                  fontSize: 12.5,
-                  color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
-                ),
-              ),
-              const SizedBox(height: 16),
-              _buildAssessmentTile(
-                context,
-                isDark,
-                title: 'Formative Assessment #1: TNA & Course Design',
-                totalMarks: 50,
-                status: 'Completed (44/50)',
-                statusColor: const Color(0xFF10B981),
-              ),
-              const SizedBox(height: 10),
-              _buildAssessmentTile(
-                context,
-                isDark,
-                title: 'Summative Assessment #2: Final Evaluation',
-                totalMarks: 100,
-                status: 'Available to Attempt',
-                statusColor: const Color(0xFF4F6CFF),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const QuizScreen(title: 'Summative Assessment Test'),
+        return SafeArea(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.85),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withAlpha(80),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
                     ),
-                  );
-                },
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    'Assessment Tests',
+                    style: GoogleFonts.inter(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Formative and Summative official assessments',
+                    style: GoogleFonts.inter(
+                      fontSize: 12.5,
+                      color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildAssessmentTile(
+                    context,
+                    isDark,
+                    title: 'Formative Assessment #1: TNA & Course Design',
+                    totalMarks: 50,
+                    status: 'Completed (44/50)',
+                    statusColor: const Color(0xFF10B981),
+                  ),
+                  const SizedBox(height: 10),
+                  _buildAssessmentTile(
+                    context,
+                    isDark,
+                    title: 'Summative Assessment #2: Final Evaluation',
+                    totalMarks: 100,
+                    status: 'Available to Attempt',
+                    statusColor: const Color(0xFF4F6CFF),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const QuizScreen(title: 'Summative Assessment Test'),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         );
       },
@@ -1282,44 +1299,61 @@ class _HomeTabState extends State<HomeTab> {
   void _showAttendanceDetails(BuildContext context, bool isDark) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: isDark ? AppColors.darkCardBg : Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Attendance Summary',
-                style: GoogleFonts.inter(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+        return SafeArea(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.85),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildStatBadge(isDark, 'Total Classes', '25', Colors.blue),
-                  _buildStatBadge(isDark, 'Present Days', '23', Colors.green),
-                  _buildStatBadge(isDark, 'Absent Days', '2', Colors.red),
-                  _buildStatBadge(isDark, 'Percentage', '92%', Colors.purple),
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withAlpha(80),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    'Attendance Summary',
+                    style: GoogleFonts.inter(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildStatBadge(isDark, 'Total Classes', '25', Colors.blue),
+                      _buildStatBadge(isDark, 'Present Days', '23', Colors.green),
+                      _buildStatBadge(isDark, 'Absent Days', '2', Colors.red),
+                      _buildStatBadge(isDark, 'Percentage', '92%', Colors.purple),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Attendance is well above the mandatory 80% threshold required for certification eligibility.',
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                      color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                    ),
+                  ),
                 ],
               ),
-              const SizedBox(height: 16),
-              Text(
-                'Attendance is well above the mandatory 80% threshold required for certification eligibility.',
-                style: GoogleFonts.inter(
-                  fontSize: 12,
-                  color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
-                ),
-              ),
-            ],
+            ),
           ),
         );
       },
@@ -1329,45 +1363,62 @@ class _HomeTabState extends State<HomeTab> {
   void _showFeeDetails(BuildContext context, bool isDark) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: isDark ? AppColors.darkCardBg : Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Fee Details & Vouchers',
-                style: GoogleFonts.inter(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
-                ),
+        return SafeArea(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.85),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withAlpha(80),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    'Fee Details & Vouchers',
+                    style: GoogleFonts.inter(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: isDark ? AppColors.darkCardElevated : const Color(0xFFF8FAFC),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      children: [
+                        _buildFeeRow('Total Course Fee', 'PKR 45,000', isDark),
+                        const Divider(height: 16),
+                        _buildFeeRow('Paid Amount', 'PKR 45,000', isDark, isPositive: true),
+                        const Divider(height: 16),
+                        _buildFeeRow('Remaining Balance', 'PKR 0', isDark),
+                        const Divider(height: 16),
+                        _buildFeeRow('Payment Status', 'CLEARED / PAID', isDark, isBadge: true),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: isDark ? AppColors.darkCardElevated : const Color(0xFFF8FAFC),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  children: [
-                    _buildFeeRow('Total Course Fee', 'PKR 45,000', isDark),
-                    const Divider(height: 16),
-                    _buildFeeRow('Paid Amount', 'PKR 45,000', isDark, isPositive: true),
-                    const Divider(height: 16),
-                    _buildFeeRow('Remaining Balance', 'PKR 0', isDark),
-                    const Divider(height: 16),
-                    _buildFeeRow('Payment Status', 'CLEARED / PAID', isDark, isBadge: true),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
         );
       },
@@ -1436,34 +1487,51 @@ class _HomeTabState extends State<HomeTab> {
   void _showProgressDetails(BuildContext context, bool isDark) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: isDark ? AppColors.darkCardBg : Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Course Progress Breakdown',
-                style: GoogleFonts.inter(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
-                ),
+        return SafeArea(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.85),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withAlpha(80),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    'Course Progress Breakdown',
+                    style: GoogleFonts.inter(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildProgressBar('Module 1: Needs Assessment', 0.90, isDark),
+                  const SizedBox(height: 10),
+                  _buildProgressBar('Module 2: Course Design', 0.85, isDark),
+                  const SizedBox(height: 10),
+                  _buildProgressBar('Module 3: Facilitation Skills', 0.65, isDark),
+                  const SizedBox(height: 10),
+                  _buildProgressBar('Module 4: Evaluation & Assessment', 0.40, isDark),
+                ],
               ),
-              const SizedBox(height: 16),
-              _buildProgressBar('Module 1: Needs Assessment', 0.90, isDark),
-              const SizedBox(height: 10),
-              _buildProgressBar('Module 2: Course Design', 0.85, isDark),
-              const SizedBox(height: 10),
-              _buildProgressBar('Module 3: Facilitation Skills', 0.65, isDark),
-              const SizedBox(height: 10),
-              _buildProgressBar('Module 4: Evaluation & Assessment', 0.40, isDark),
-            ],
+            ),
           ),
         );
       },
@@ -1512,61 +1580,78 @@ class _HomeTabState extends State<HomeTab> {
   void _showQuizzesDetails(BuildContext context, bool isDark) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: isDark ? AppColors.darkCardBg : Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Attempt Quizzes',
-                style: GoogleFonts.inter(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
-                ),
-              ),
-              const SizedBox(height: 14),
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const QuizScreen(title: "Today's 10 Quiz"),
+        return SafeArea(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.85),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withAlpha(80),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
                     ),
-                  );
-                },
-                icon: const Icon(Icons.play_arrow_rounded),
-                label: const Text('Start Daily Quiz'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).primaryColor,
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size(double.infinity, 44),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    'Attempt Quizzes',
+                    style: GoogleFonts.inter(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const QuizScreen(title: "Today's 10 Quiz"),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.play_arrow_rounded),
+                    label: const Text('Start Daily Quiz'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).primaryColor,
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size(double.infinity, 44),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  OutlinedButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      showDialog(
+                        context: context,
+                        builder: (_) => const CustomQuizDialog(),
+                      );
+                    },
+                    icon: const Icon(Icons.tune_rounded),
+                    label: const Text('Custom Quiz Generator'),
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 44),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 10),
-              OutlinedButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                  showDialog(
-                    context: context,
-                    builder: (_) => const CustomQuizDialog(),
-                  );
-                },
-                icon: const Icon(Icons.tune_rounded),
-                label: const Text('Custom Quiz Generator'),
-                style: OutlinedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 44),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-              ),
-            ],
+            ),
           ),
         );
       },
@@ -1576,45 +1661,62 @@ class _HomeTabState extends State<HomeTab> {
   void _showCourseTimingsModal(BuildContext context, bool isDark) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: isDark ? AppColors.darkCardBg : Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Course Timings & Batch Info',
-                style: GoogleFonts.inter(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
-                ),
+        return SafeArea(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.85),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withAlpha(80),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    'Course Timings & Batch Info',
+                    style: GoogleFonts.inter(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: isDark ? AppColors.darkCardElevated : const Color(0xFFF8FAFC),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Column(
+                      children: [
+                        _buildTimingRow(Icons.calendar_today_rounded, 'Class Schedule', 'Mon, Wed, Fri (Weekly)', isDark),
+                        const Divider(height: 16),
+                        _buildTimingRow(Icons.access_time_rounded, 'Class Timings', '06:00 PM - 08:00 PM PKT', isDark),
+                        const Divider(height: 16),
+                        _buildTimingRow(Icons.person_outline_rounded, 'Lead Trainer', 'Dr. John Doe', isDark),
+                        const Divider(height: 16),
+                        _buildTimingRow(Icons.location_on_outlined, 'Campus / Medium', 'Main Campus / Online LMS', isDark),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: isDark ? AppColors.darkCardElevated : const Color(0xFFF8FAFC),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Column(
-                  children: [
-                    _buildTimingRow(Icons.calendar_today_rounded, 'Class Schedule', 'Mon, Wed, Fri (Weekly)', isDark),
-                    const Divider(height: 16),
-                    _buildTimingRow(Icons.access_time_rounded, 'Class Timings', '06:00 PM - 08:00 PM PKT', isDark),
-                    const Divider(height: 16),
-                    _buildTimingRow(Icons.person_outline_rounded, 'Lead Trainer', 'Dr. John Doe', isDark),
-                    const Divider(height: 16),
-                    _buildTimingRow(Icons.location_on_outlined, 'Campus / Medium', 'Main Campus / Online LMS', isDark),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
         );
       },
@@ -1648,44 +1750,61 @@ class _HomeTabState extends State<HomeTab> {
   void _showAssignmentsModal(BuildContext context, bool isDark) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: isDark ? AppColors.darkCardBg : Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Assignments & Tasks',
-                style: GoogleFonts.inter(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
-                ),
+        return SafeArea(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.85),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withAlpha(80),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    'Assignments & Tasks',
+                    style: GoogleFonts.inter(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  _buildAssessmentTile(
+                    context,
+                    isDark,
+                    title: 'Assignment 1: Instructional Plan Formulation',
+                    totalMarks: 20,
+                    status: 'Submitted • Graded (19/20)',
+                    statusColor: const Color(0xFF10B981),
+                  ),
+                  const SizedBox(height: 10),
+                  _buildAssessmentTile(
+                    context,
+                    isDark,
+                    title: 'Assignment 2: Lesson Delivery Reflection',
+                    totalMarks: 20,
+                    status: 'Due in 3 days',
+                    statusColor: const Color(0xFFF59E0B),
+                  ),
+                ],
               ),
-              const SizedBox(height: 14),
-              _buildAssessmentTile(
-                context,
-                isDark,
-                title: 'Assignment 1: Instructional Plan Formulation',
-                totalMarks: 20,
-                status: 'Submitted • Graded (19/20)',
-                statusColor: const Color(0xFF10B981),
-              ),
-              const SizedBox(height: 10),
-              _buildAssessmentTile(
-                context,
-                isDark,
-                title: 'Assignment 2: Lesson Delivery Reflection',
-                totalMarks: 20,
-                status: 'Due in 3 days',
-                statusColor: const Color(0xFFF59E0B),
-              ),
-            ],
+            ),
           ),
         );
       },
@@ -1695,32 +1814,49 @@ class _HomeTabState extends State<HomeTab> {
   void _showAttachmentsModal(BuildContext context, bool isDark) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: isDark ? AppColors.darkCardBg : Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Student Attachments & Resources',
-                style: GoogleFonts.inter(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
-                ),
+        return SafeArea(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.85),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withAlpha(80),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    'Student Attachments & Resources',
+                    style: GoogleFonts.inter(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  _buildAttachmentItem('CIT_Course_Syllabus_2026.pdf', '2.4 MB', isDark),
+                  const SizedBox(height: 8),
+                  _buildAttachmentItem('Module_3_Facilitation_Handout.pdf', '5.1 MB', isDark),
+                  const SizedBox(height: 8),
+                  _buildAttachmentItem('Kirkpatrick_Evaluation_Reference.pdf', '1.8 MB', isDark),
+                ],
               ),
-              const SizedBox(height: 14),
-              _buildAttachmentItem('CIT_Course_Syllabus_2026.pdf', '2.4 MB', isDark),
-              const SizedBox(height: 8),
-              _buildAttachmentItem('Module_3_Facilitation_Handout.pdf', '5.1 MB', isDark),
-              const SizedBox(height: 8),
-              _buildAttachmentItem('Kirkpatrick_Evaluation_Reference.pdf', '1.8 MB', isDark),
-            ],
+            ),
           ),
         );
       },
@@ -1760,32 +1896,49 @@ class _HomeTabState extends State<HomeTab> {
   void _showNotificationsSheet(BuildContext context, bool isDark) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: isDark ? AppColors.darkCardBg : Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Notifications',
-                style: GoogleFonts.inter(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
-                ),
+        return SafeArea(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.85),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withAlpha(80),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    'Notifications',
+                    style: GoogleFonts.inter(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  _buildNotificationItem('New lecture uploaded in Module 3', '10 mins ago', Icons.video_library_rounded, Colors.blue, isDark),
+                  const SizedBox(height: 10),
+                  _buildNotificationItem('Assessment #1 graded: 44/50', '2 hours ago', Icons.grade_rounded, Colors.green, isDark),
+                  const SizedBox(height: 10),
+                  _buildNotificationItem('Live doubt clearing session tomorrow 7 PM', '1 day ago', Icons.live_tv_rounded, Colors.orange, isDark),
+                ],
               ),
-              const SizedBox(height: 14),
-              _buildNotificationItem('New lecture uploaded in Module 3', '10 mins ago', Icons.video_library_rounded, Colors.blue, isDark),
-              const SizedBox(height: 10),
-              _buildNotificationItem('Assessment #1 graded: 44/50', '2 hours ago', Icons.grade_rounded, Colors.green, isDark),
-              const SizedBox(height: 10),
-              _buildNotificationItem('Live doubt clearing session tomorrow 7 PM', '1 day ago', Icons.live_tv_rounded, Colors.orange, isDark),
-            ],
+            ),
           ),
         );
       },
@@ -1827,63 +1980,17 @@ class _HomeTabState extends State<HomeTab> {
 
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: Theme.of(context).brightness == Brightness.dark ? AppColors.darkCardBg : Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Select Enrolled Course',
-                style: GoogleFonts.inter(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              const SizedBox(height: 12),
-              ...exams.map((exam) {
-                final isSelected = state.currentExam == exam;
-                return ListTile(
-                  title: Text(
-                    exam,
-                    style: GoogleFonts.inter(
-                      fontSize: 14.5,
-                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                      color: isSelected ? primary : null,
-                    ),
-                  ),
-                  trailing: isSelected ? Icon(Icons.check, color: primary) : null,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  onTap: () {
-                    state.setCurrentExam(exam);
-                    Navigator.pop(context);
-                  },
-                );
-              }),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  void _showThemePickerSheet(BuildContext context, AppStateProvider state, bool isDark) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: isDark ? AppColors.darkCardBg : Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (ctx) {
-        return StatefulBuilder(
-          builder: (ctx, setSheetState) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        return SafeArea(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.85),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1899,110 +2006,181 @@ class _HomeTabState extends State<HomeTab> {
                     ),
                   ),
                   const SizedBox(height: 14),
-                  Row(
-                    children: [
-                      Icon(Icons.palette_rounded, color: Theme.of(context).primaryColor, size: 24),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Change Institute Theme',
-                        style: GoogleFonts.inter(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                          color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
                   Text(
-                    'Choose a color palette matching your institute branding:',
+                    'Select Enrolled Course',
                     style: GoogleFonts.inter(
-                      fontSize: 12,
-                      color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
-                  const SizedBox(height: 14),
-                  ...AppColors.presets.asMap().entries.map((entry) {
-                    final index = entry.key;
-                    final preset = entry.value;
-                    final isSelected = state.selectedThemeIndex == index;
-
-                    return InkWell(
-                      onTap: () {
-                        state.setThemeIndex(index);
-                        setSheetState(() {});
-                        Navigator.pop(ctx);
-                      },
-                      borderRadius: BorderRadius.circular(12),
-                      child: Container(
-                        margin: const EdgeInsets.only(bottom: 8),
-                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? preset.primary.withAlpha(isDark ? 50 : 25)
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: isSelected
-                                ? preset.primary
-                                : (isDark ? AppColors.darkBorder : AppColors.lightBorder),
-                            width: isSelected ? 1.5 : 1,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 28,
-                              height: 28,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [preset.primary, preset.primaryLight],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: preset.primary.withAlpha(70),
-                                    blurRadius: 4,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    preset.name,
-                                    style: GoogleFonts.inter(
-                                      fontSize: 14,
-                                      fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                                      color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
-                                    ),
-                                  ),
-                                  Text(
-                                    preset.subtitle,
-                                    style: GoogleFonts.inter(
-                                      fontSize: 11,
-                                      color: isDark ? AppColors.darkTextMuted : AppColors.lightTextMuted,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            if (isSelected)
-                              Icon(Icons.check_circle_rounded, color: preset.primary, size: 22)
-                            else
-                              Icon(Icons.radio_button_unchecked_rounded, color: Colors.grey.withAlpha(120), size: 20),
-                          ],
+                  const SizedBox(height: 12),
+                  ...exams.map((exam) {
+                    final isSelected = state.currentExam == exam;
+                    return ListTile(
+                      title: Text(
+                        exam,
+                        style: GoogleFonts.inter(
+                          fontSize: 14.5,
+                          fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                          color: isSelected ? primary : null,
                         ),
                       ),
+                      trailing: isSelected ? Icon(Icons.check, color: primary) : null,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      onTap: () {
+                        state.setCurrentExam(exam);
+                        Navigator.pop(context);
+                      },
                     );
                   }),
-                  const SizedBox(height: 8),
                 ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showThemePickerSheet(BuildContext context, AppStateProvider state, bool isDark) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: isDark ? AppColors.darkCardBg : Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setSheetState) {
+            return SafeArea(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(ctx).size.height * 0.85,
+                ),
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: Container(
+                          width: 40,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.withAlpha(80),
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      Row(
+                        children: [
+                          Icon(Icons.palette_rounded, color: Theme.of(context).primaryColor, size: 24),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Change Institute Theme',
+                            style: GoogleFonts.inter(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800,
+                              color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Choose a color palette matching your institute branding:',
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      ...AppColors.presets.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final preset = entry.value;
+                        final isSelected = state.selectedThemeIndex == index;
+
+                        return InkWell(
+                          onTap: () {
+                            state.setThemeIndex(index);
+                            setSheetState(() {});
+                            Navigator.pop(ctx);
+                          },
+                          borderRadius: BorderRadius.circular(12),
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: 8),
+                            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? preset.primary.withAlpha(isDark ? 50 : 25)
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: isSelected
+                                    ? preset.primary
+                                    : (isDark ? AppColors.darkBorder : AppColors.lightBorder),
+                                width: isSelected ? 1.5 : 1,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 28,
+                                  height: 28,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [preset.primary, preset.primaryLight],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: preset.primary.withAlpha(70),
+                                        blurRadius: 4,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        preset.name,
+                                        style: GoogleFonts.inter(
+                                          fontSize: 14,
+                                          fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                                          color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                                        ),
+                                      ),
+                                      Text(
+                                        preset.subtitle,
+                                        style: GoogleFonts.inter(
+                                          fontSize: 11,
+                                          color: isDark ? AppColors.darkTextMuted : AppColors.lightTextMuted,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                if (isSelected)
+                                  Icon(Icons.check_circle_rounded, color: preset.primary, size: 22)
+                                else
+                                  Icon(Icons.radio_button_unchecked_rounded, color: Colors.grey.withAlpha(120), size: 20),
+                              ],
+                            ),
+                          ),
+                        );
+                      }),
+                      const SizedBox(height: 8),
+                    ],
+                  ),
+                ),
               ),
             );
           },

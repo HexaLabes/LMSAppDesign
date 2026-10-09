@@ -38,94 +38,103 @@ class SideMenuDrawer extends StatelessWidget {
         child: Column(
           children: [
             // Student Profile Header
-            Container(
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(
-                color: isDark ? AppColors.darkCardBg : Colors.white,
-                border: Border(
-                  bottom: BorderSide(
-                    color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+            InkWell(
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const StudentDashboardProfileScreen()),
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: isDark ? AppColors.darkCardBg : Colors.white,
+                  border: Border(
+                    bottom: BorderSide(
+                      color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                    ),
                   ),
                 ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 52,
-                        height: 52,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF0F44B8), Color(0xFF1E5CD8)],
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 52,
+                          height: 52,
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF0F44B8), Color(0xFF1E5CD8)],
+                            ),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF0F44B8).withAlpha(isDark ? 80 : 40),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFF0F44B8).withAlpha(isDark ? 80 : 40),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
+                          child: const Center(
+                            child: Icon(
+                              Icons.person_rounded,
+                              color: Colors.white,
+                              size: 30,
                             ),
-                          ],
-                        ),
-                        child: const Center(
-                          child: Icon(
-                            Icons.person_rounded,
-                            color: Colors.white,
-                            size: 30,
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'KHALID',
-                              style: GoogleFonts.inter(
-                                fontSize: 16.5,
-                                fontWeight: FontWeight.w800,
-                                color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              'khalid@hexalabes.com',
-                              style: GoogleFonts.inter(
-                                fontSize: 12,
-                                color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 4),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF0F44B8).withAlpha(25),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Text(
-                                'Enrolled Student',
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'KHALID',
                                 style: GoogleFonts.inter(
-                                  fontSize: 10.5,
-                                  fontWeight: FontWeight.w700,
-                                  color: const Color(0xFF0F44B8),
+                                  fontSize: 16.5,
+                                  fontWeight: FontWeight.w800,
+                                  color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                'khalid@hexalabes.com',
+                                style: GoogleFonts.inter(
+                                  fontSize: 12,
+                                  color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 4),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF0F44B8).withAlpha(25),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  'Enrolled Student',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 10.5,
+                                    fontWeight: FontWeight.w700,
+                                    color: const Color(0xFF0F44B8),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
 
-            // Navigation Options List (All 14 LMS Sidebar Items)
+            // Navigation Options List (All 15 LMS Sidebar Items)
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
@@ -143,11 +152,22 @@ class SideMenuDrawer extends StatelessWidget {
                     ),
                   ),
 
-                  // 1. Student Dashboard
+                  // 1. Student Dashboard (Navigates to Main LMS Dashboard screen)
                   _buildSidebarItem(
                     context,
                     icon: Icons.dashboard_rounded,
                     title: 'Student Dashboard',
+                    onTap: () {
+                      Navigator.pop(context);
+                      onTabSelected(0);
+                    },
+                  ),
+
+                  // 2. Student Profile (Opens Student Profile screen)
+                  _buildSidebarItem(
+                    context,
+                    icon: Icons.person_outline_rounded,
+                    title: 'Student Profile',
                     onTap: () {
                       Navigator.pop(context);
                       Navigator.push(
