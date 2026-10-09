@@ -67,11 +67,12 @@ class _CoursesHubScreenState extends State<CoursesHubScreen> with SingleTickerPr
         ),
         bottom: TabBar(
           controller: _tabController,
-          labelColor: const Color(0xFF0F44B8),
-          unselectedLabelColor: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
-          indicatorColor: const Color(0xFF0F44B8),
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white.withAlpha(180),
+          indicatorColor: Colors.white,
           indicatorWeight: 3,
-          labelStyle: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 13),
+          labelStyle: GoogleFonts.inter(fontWeight: FontWeight.w800, fontSize: 13),
+          unselectedLabelStyle: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 13),
           tabs: const [
             Tab(text: 'Enrolled Courses'),
             Tab(text: 'Explore Catalog'),
