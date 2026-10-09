@@ -202,8 +202,8 @@ class _AttachmentsScreenState extends State<AttachmentsScreen> {
                 final isUploaded = doc['isUploaded'] as bool;
 
                 return Container(
-                  margin: const EdgeInsets.only(bottom: 14),
-                  padding: const EdgeInsets.all(16),
+                  margin: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                   decoration: BoxDecoration(
                     color: isDark ? AppColors.darkCardBg : Colors.white,
                     borderRadius: BorderRadius.circular(16),
@@ -222,8 +222,8 @@ class _AttachmentsScreenState extends State<AttachmentsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        width: 44,
-                        height: 44,
+                        width: 42,
+                        height: 42,
                         decoration: BoxDecoration(
                           color: (isUploaded ? const Color(0xFF10B981) : const Color(0xFFF59E0B)).withAlpha(25),
                           borderRadius: BorderRadius.circular(10),
@@ -231,9 +231,10 @@ class _AttachmentsScreenState extends State<AttachmentsScreen> {
                         child: Icon(
                           isUploaded ? Icons.description_rounded : Icons.file_upload_outlined,
                           color: isUploaded ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
+                          size: 22,
                         ),
                       ),
-                      const SizedBox(width: 14),
+                      const SizedBox(width: 12),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -249,55 +250,79 @@ class _AttachmentsScreenState extends State<AttachmentsScreen> {
                             ),
                             const SizedBox(height: 4),
 
-                            // 2. Date line + Action Buttons in the SAME row
+                            // 2. Date line + Action Buttons in the SAME row (Never cut)
                             Row(
                               children: [
-                                Expanded(
-                                  child: Text(
-                                    isUploaded
-                                        ? 'Updated: ${doc['updatedDate'] ?? '-'}'
-                                        : 'Not Uploaded',
-                                    style: GoogleFonts.inter(
-                                      fontSize: 11.5,
-                                      color: isUploaded
-                                          ? (isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary)
-                                          : const Color(0xFFB45309),
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
+                                Text(
+                                  isUploaded
+                                      ? 'Updated: ${doc['updatedDate'] ?? '-'}'
+                                      : 'Not Uploaded',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 11,
+                                    color: isUploaded
+                                        ? (isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary)
+                                        : const Color(0xFFB45309),
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                                const SizedBox(width: 8),
+                                const Spacer(),
                                 if (isUploaded) ...[
-                                  OutlinedButton.icon(
-                                    onPressed: () => _viewAttachment(doc),
-                                    icon: const Icon(Icons.visibility_rounded, size: 13),
-                                    label: const Text('View'),
-                                    style: OutlinedButton.styleFrom(
-                                      foregroundColor: const Color(0xFF0F44B8),
-                                      side: const BorderSide(color: Color(0xFF0F44B8)),
-                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                      minimumSize: Size.zero,
-                                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-                                      textStyle: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w700),
+                                  InkWell(
+                                    onTap: () => _viewAttachment(doc),
+                                    borderRadius: BorderRadius.circular(6),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(6),
+                                        border: Border.all(color: const Color(0xFF0F44B8)),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Icon(Icons.visibility_rounded, size: 12, color: Color(0xFF0F44B8)),
+                                          const SizedBox(width: 3),
+                                          Text(
+                                            'View',
+                                            style: GoogleFonts.inter(
+                                              fontSize: 10.5,
+                                              fontWeight: FontWeight.w700,
+                                              color: const Color(0xFF0F44B8),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                  const SizedBox(width: 6),
+                                  const SizedBox(width: 5),
                                 ],
-                                ElevatedButton.icon(
-                                  onPressed: () => _showUploadDialog(idx),
-                                  icon: Icon(isUploaded ? Icons.sync_rounded : Icons.file_upload_outlined, size: 13),
-                                  label: Text(isUploaded ? 'Replace' : 'Upload'),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF0F44B8),
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                    minimumSize: Size.zero,
-                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-                                    textStyle: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w700),
+                                InkWell(
+                                  onTap: () => _showUploadDialog(idx),
+                                  borderRadius: BorderRadius.circular(6),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF0F44B8),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          isUploaded ? Icons.sync_rounded : Icons.file_upload_outlined,
+                                          size: 12,
+                                          color: Colors.white,
+                                        ),
+                                        const SizedBox(width: 3),
+                                        Text(
+                                          isUploaded ? 'Replace' : 'Upload',
+                                          style: GoogleFonts.inter(
+                                            fontSize: 10.5,
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ],
