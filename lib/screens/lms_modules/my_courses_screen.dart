@@ -5,7 +5,6 @@ import '../../theme/app_theme.dart';
 import '../courses/course_detail_screen.dart';
 import '../courses/course_module_screen.dart';
 import '../courses/courses_hub_screen.dart';
-import '../courses/scorm_player_screen.dart';
 
 class MyCoursesScreen extends StatelessWidget {
   const MyCoursesScreen({super.key});
@@ -225,66 +224,47 @@ class MyCoursesScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 14),
 
-                            // Action buttons
+                            // Action row: Module/lecture count & View Modules button
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  '${course.modulesCount} Modules • ${course.lecturesCount} Lectures',
-                                  style: GoogleFonts.inter(
-                                    fontSize: 11.5,
-                                    color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
-                                  ),
-                                ),
-                                Row(
-                                  children: [
-                                    if (course.hasScorm) ...[
-                                      OutlinedButton.icon(
-                                        onPressed: () {
-                                          final scormMod = course.modules.firstWhere((m) => m.scormPackage != null, orElse: () => course.modules.first);
-                                          if (scormMod.scormPackage != null) {
-                                            Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                builder: (_) => ScormPlayerScreen(
-                                                  course: course,
-                                                  module: scormMod,
-                                                  scormPackage: scormMod.scormPackage!,
-                                                ),
-                                              ),
-                                            );
-                                          }
-                                        },
-                                        icon: const Icon(Icons.extension_rounded, size: 14),
-                                        label: const Text('SCORM'),
-                                        style: OutlinedButton.styleFrom(
-                                          foregroundColor: const Color(0xFF38BDF8),
-                                          side: const BorderSide(color: Color(0xFF38BDF8)),
-                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                          textStyle: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w700),
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      const Icon(Icons.auto_stories_rounded, size: 14, color: Colors.grey),
+                                      const SizedBox(width: 5),
+                                      Flexible(
+                                        child: Text(
+                                          '${course.modulesCount} Modules • ${course.lecturesCount} Lectures',
+                                          style: GoogleFonts.inter(
+                                            fontSize: 11.5,
+                                            fontWeight: FontWeight.w500,
+                                            color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
-                                      const SizedBox(width: 8),
                                     ],
-                                    ElevatedButton.icon(
-                                      onPressed: () {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (_) => CourseModuleScreen(course: course),
-                                          ),
-                                        );
-                                      },
-                                      icon: const Icon(Icons.play_arrow_rounded, size: 16),
-                                      label: const Text('Modules'),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(0xFF0F44B8),
-                                        foregroundColor: Colors.white,
-                                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                        textStyle: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w700),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                ElevatedButton.icon(
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) => CourseModuleScreen(course: course),
                                       ),
-                                    ),
-                                  ],
+                                    );
+                                  },
+                                  icon: const Icon(Icons.arrow_forward_rounded, size: 15),
+                                  label: const Text('Modules'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF0F44B8),
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                    textStyle: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700),
+                                  ),
                                 ),
                               ],
                             ),

@@ -4,17 +4,18 @@ import '../../models/course_models.dart';
 import '../../theme/app_theme.dart';
 import '../quiz/quiz_screen.dart';
 import 'pdf_viewer_screen.dart';
-import 'scorm_player_screen.dart';
 import 'watch_lecture_screen.dart';
 
 class CourseModuleScreen extends StatefulWidget {
   final LmsCourse course;
   final int initialModuleIndex;
+  final bool initialShowResources;
 
   const CourseModuleScreen({
     super.key,
     required this.course,
     this.initialModuleIndex = 0,
+    this.initialShowResources = false,
   });
 
   @override
@@ -23,10 +24,12 @@ class CourseModuleScreen extends StatefulWidget {
 
 class _CourseModuleScreenState extends State<CourseModuleScreen> {
   late int _activeModuleIndex;
+  bool _showingCourseResources = false;
 
   @override
   void initState() {
     super.initState();
+    _showingCourseResources = widget.initialShowResources;
     _activeModuleIndex = widget.initialModuleIndex;
     if (_activeModuleIndex >= widget.course.modules.length) {
       _activeModuleIndex = 0;
@@ -39,8 +42,175 @@ class _CourseModuleScreenState extends State<CourseModuleScreen> {
     if (index >= 0 && index < widget.course.modules.length) {
       setState(() {
         _activeModuleIndex = index;
+        _showingCourseResources = false;
       });
     }
+  }
+
+  void _showResourcesView() {
+    setState(() {
+      _showingCourseResources = true;
+    });
+  }
+
+  void _showInstructorProfile() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withAlpha(50),
+              blurRadius: 20,
+              offset: const Offset(0, -5),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withAlpha(80),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  CircleAvatar(
+                    radius: 36,
+                    backgroundImage: NetworkImage(widget.course.instructorAvatar),
+                    onBackgroundImageError: (_, __) {},
+                    child: widget.course.instructorAvatar.isEmpty
+                        ? const Icon(Icons.person, size: 36)
+                        : null,
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.course.instructorName,
+                          style: GoogleFonts.inter(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
+                            color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          widget.course.instructorRole,
+                          style: GoogleFonts.inter(
+                            fontSize: 13,
+                            color: const Color(0xFF0F44B8),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Row(
+                          children: [
+                            const Icon(Icons.email_outlined, size: 14, color: Colors.grey),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                widget.course.instructorEmail,
+                                style: GoogleFonts.inter(fontSize: 12, color: Colors.grey),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              const Divider(),
+              const SizedBox(height: 12),
+              Text(
+                'Instructor Overview',
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Certified master trainer with extensive experience delivering international curriculums, assessments, and corporate training programs for leading institutions.',
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  height: 1.5,
+                  color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                ),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Message request sent to ${widget.course.instructorName}'),
+                        backgroundColor: const Color(0xFF0F44B8),
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.send_rounded, size: 16),
+                  label: const Text('Contact Instructor'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0F44B8),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _downloadResource(LmsResource res) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.downloading_rounded, color: Colors.white, size: 20),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                'Downloading "${res.title}" (${res.fileSize})...',
+                style: GoogleFonts.inter(fontSize: 12.5),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFF10B981),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
 
   @override
@@ -54,13 +224,15 @@ class _CourseModuleScreenState extends State<CourseModuleScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.course.title,
+              '${widget.course.title} Modules',
               style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w700),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
             Text(
-              'Module ${_activeModule.moduleNumber}: ${_activeModule.title}',
+              _showingCourseResources
+                  ? 'Course Resources'
+                  : 'Module ${_activeModule.moduleNumber}: ${_activeModule.title}',
               style: GoogleFonts.inter(
                 fontSize: 11.5,
                 color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
@@ -77,71 +249,179 @@ class _CourseModuleScreenState extends State<CourseModuleScreen> {
         actions: [
           Builder(
             builder: (ctx) => IconButton(
-              icon: const Icon(Icons.view_sidebar_rounded),
-              tooltip: 'All Modules',
+              icon: const Icon(Icons.menu_book_rounded),
+              tooltip: 'Module Navigation',
               onPressed: () => Scaffold.of(ctx).openEndDrawer(),
             ),
           ),
         ],
       ),
-      endDrawer: _buildModuleSidebar(isDark),
+      endDrawer: _buildModuleDrawer(isDark),
+      bottomNavigationBar: _buildBottomNavToolbar(isDark),
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(18),
+        child: Column(
           children: [
-            // 1. MODULE BANNER & PROGRESS
-            _buildModuleBanner(isDark),
-            const SizedBox(height: 20),
+            // Top Bar: Instructor Button + Course Quick Switcher
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.darkCardBg : Colors.white,
+                border: Border(
+                  bottom: BorderSide(
+                    color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                  ),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: _showInstructorProfile,
+                      icon: const Icon(Icons.account_circle_outlined, size: 17),
+                      label: const Text('COURSE INSTRUCTOR PROFILE'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0F44B8),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        textStyle: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w800, letterSpacing: 0.3),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
-            // 2. VIDEO LECTURES SECTION
-            _buildLecturesSection(isDark),
-            const SizedBox(height: 20),
+            // Horizontal Tab Selector for Fast Switching (Course Resources & Modules)
+            _buildHorizontalSelector(isDark),
 
-            // 3. SCORM 1.2 SIMULATION (IF AVAILABLE)
-            if (_activeModule.scormPackage != null) ...[
-              _buildScormSection(isDark),
-              const SizedBox(height: 20),
-            ],
-
-            // 4. MODULE QUIZZES & ASSESSMENTS
-            _buildAssessmentSection(isDark),
-            const SizedBox(height: 20),
-
-            // 5. MODULE RESOURCES & HANDOUTS
-            if (_activeModule.resources.isNotEmpty) ...[
-              _buildResourcesSection(isDark),
-              const SizedBox(height: 20),
-            ],
+            // Main Content Area
+            Expanded(
+              child: _showingCourseResources
+                  ? _buildCourseResourcesView(isDark)
+                  : _buildActiveModuleView(isDark),
+            ),
           ],
         ),
       ),
     );
   }
 
-  // Sidebar Drawer for switching modules (Matches LMS _CourseModuleSidebar.cshtml)
-  Widget _buildModuleSidebar(bool isDark) {
-    return Drawer(
-      backgroundColor: isDark ? AppColors.darkCardBg : Colors.white,
-      child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildHorizontalSelector(bool isDark) {
+    return Container(
+      height: 48,
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
+        border: Border(
+          bottom: BorderSide(
+            color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+          ),
+        ),
+      ),
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        children: [
+          // Course Resources Tab
+          _buildSelectorPill(
+            title: '📁 Course Resources',
+            isSelected: _showingCourseResources,
+            onTap: _showResourcesView,
+            isDark: isDark,
+          ),
+          const SizedBox(width: 8),
+
+          // Modules Tabs
+          ...widget.course.modules.asMap().entries.map((entry) {
+            final idx = entry.key;
+            final mod = entry.value;
+            final isSelected = !_showingCourseResources && _activeModuleIndex == idx;
+
+            return Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: _buildSelectorPill(
+                title: '${mod.title} >',
+                isSelected: isSelected,
+                onTap: () => _selectModule(idx),
+                isDark: isDark,
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSelectorPill({
+    required String title,
+    required bool isSelected,
+    required VoidCallback onTap,
+    required bool isDark,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? const Color(0xFF0F44B8)
+              : (isDark ? const Color(0xFF334155) : Colors.white),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected
+                ? const Color(0xFF0F44B8)
+                : (isDark ? Colors.transparent : Colors.grey.withAlpha(40)),
+          ),
+        ),
+        child: Center(
+          child: Text(
+            title,
+            style: GoogleFonts.inter(
+              fontSize: 12,
+              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+              color: isSelected
+                  ? Colors.white
+                  : (isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCourseResourcesView(bool isDark) {
+    final resources = widget.course.resources;
+
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        // Section Header
+        Row(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(18),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF0F44B8).withAlpha(isDark ? 50 : 20),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.folder_open_rounded, color: Color(0xFF0F44B8), size: 22),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Course Syllabus',
+                    'Course Resources',
                     style: GoogleFonts.inter(
-                      fontSize: 18,
+                      fontSize: 17,
                       fontWeight: FontWeight.w800,
                       color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
                     ),
                   ),
-                  const SizedBox(height: 4),
                   Text(
-                    '${widget.course.modules.length} Modules in this course',
+                    '${resources.length} textbooks, presentations & study handouts available',
                     style: GoogleFonts.inter(
                       fontSize: 12,
                       color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
@@ -150,69 +430,174 @@ class _CourseModuleScreenState extends State<CourseModuleScreen> {
                 ],
               ),
             ),
-            const Divider(height: 1),
-            Expanded(
-              child: ListView.builder(
-                itemCount: widget.course.modules.length,
-                itemBuilder: (context, index) {
-                  final mod = widget.course.modules[index];
-                  final isSelected = index == _activeModuleIndex;
+          ],
+        ),
+        const SizedBox(height: 16),
 
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? (isDark ? const Color(0xFF1E3A8A).withAlpha(60) : const Color(0xFFEFF6FF))
-                          : Colors.transparent,
-                      border: Border(
-                        left: BorderSide(
-                          color: isSelected ? const Color(0xFF0F44B8) : Colors.transparent,
-                          width: 4,
+        if (resources.isEmpty)
+          Container(
+            padding: const EdgeInsets.all(32),
+            alignment: Alignment.center,
+            child: Text(
+              'No course resources uploaded for this course yet.',
+              style: GoogleFonts.inter(
+                fontSize: 13,
+                color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+              ),
+            ),
+          )
+        else
+          ...resources.map((res) => _buildResourceCard(res, isDark)),
+      ],
+    );
+  }
+
+  Widget _buildResourceCard(LmsResource res, bool isDark) {
+    IconData iconData = Icons.picture_as_pdf_rounded;
+    Color badgeColor = const Color(0xFF6366F1);
+
+    if (res.type.toLowerCase().contains('book')) {
+      iconData = Icons.menu_book_rounded;
+      badgeColor = const Color(0xFF0F44B8);
+    } else if (res.type.toLowerCase().contains('presentation')) {
+      iconData = Icons.slideshow_rounded;
+      badgeColor = const Color(0xFFE11D48);
+    } else if (res.type.toLowerCase().contains('study')) {
+      iconData = Icons.library_books_rounded;
+      badgeColor = const Color(0xFF10B981);
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkCardBg : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(isDark ? 30 : 10),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: badgeColor.withAlpha(isDark ? 50 : 25),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(iconData, color: badgeColor, size: 26),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: badgeColor.withAlpha(isDark ? 40 : 20),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              res.type.toUpperCase(),
+                              style: GoogleFonts.inter(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w800,
+                                color: badgeColor,
+                              ),
+                            ),
+                          ),
+                          const Spacer(),
+                          Text(
+                            res.fileSize,
+                            style: GoogleFonts.inter(
+                              fontSize: 11.5,
+                              color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        res.title,
+                        style: GoogleFonts.inter(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w800,
+                          color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
                         ),
                       ),
-                    ),
-                    child: ListTile(
-                      onTap: () {
-                        Navigator.pop(context); // close drawer
-                        _selectModule(index);
-                      },
-                      leading: CircleAvatar(
-                        radius: 14,
-                        backgroundColor: isSelected
-                            ? const Color(0xFF0F44B8)
-                            : (isDark ? AppColors.darkBorder : AppColors.lightBorder),
-                        child: Text(
-                          '${mod.moduleNumber}',
+                      if (res.description.isNotEmpty) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          res.description,
                           style: GoogleFonts.inter(
                             fontSize: 12,
-                            fontWeight: FontWeight.w800,
-                            color: isSelected ? Colors.white : (isDark ? Colors.white70 : Colors.black87),
+                            color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                            height: 1.4,
                           ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            const Divider(height: 1),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                OutlinedButton.icon(
+                  onPressed: () => _downloadResource(res),
+                  icon: const Icon(Icons.download_rounded, size: 16),
+                  label: const Text('DOWNLOAD'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: isDark ? Colors.white70 : Colors.black87,
+                    side: BorderSide(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    textStyle: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w700),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => PdfViewerScreen(
+                          resource: res,
+                          courseTitle: widget.course.title,
                         ),
                       ),
-                      title: Text(
-                        mod.title,
-                        style: GoogleFonts.inter(
-                          fontSize: 13,
-                          fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                          color: isSelected
-                              ? const Color(0xFF0F44B8)
-                              : (isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary),
-                        ),
-                      ),
-                      subtitle: Text(
-                        '${mod.lectures.length} Lectures • ${mod.duration}',
-                        style: GoogleFonts.inter(
-                          fontSize: 11,
-                          color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
-                        ),
-                      ),
-                      trailing: mod.progress >= 1.0
-                          ? const Icon(Icons.check_circle_rounded, color: Color(0xFF10B981), size: 18)
-                          : null,
-                    ),
-                  );
-                },
-              ),
+                    );
+                  },
+                  icon: const Icon(Icons.visibility_rounded, size: 16),
+                  label: const Text('VIEW'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0F44B8),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    textStyle: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -220,79 +605,91 @@ class _CourseModuleScreenState extends State<CourseModuleScreen> {
     );
   }
 
-  Widget _buildModuleBanner(bool isDark) {
+  Widget _buildActiveModuleView(bool isDark) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        // Module Banner & Header
+        _buildModuleHeader(isDark),
+        const SizedBox(height: 18),
+
+        // Video Lectures Section
+        _buildLecturesSection(isDark),
+        const SizedBox(height: 18),
+
+        // Module Quizzes & Assessments (if any)
+        if (_activeModule.quizzes.isNotEmpty || _activeModule.assessmentTest != null) ...[
+          _buildAssessmentSection(isDark),
+          const SizedBox(height: 18),
+        ],
+
+        // Module Handouts (if any)
+        if (_activeModule.resources.isNotEmpty) ...[
+          _buildModuleHandoutsSection(isDark),
+          const SizedBox(height: 18),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildModuleHeader(bool isDark) {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            const Color(0xFF0F44B8),
-            const Color(0xFF1E5CD8),
-          ],
-        ),
+        color: isDark ? AppColors.darkCardBg : Colors.white,
         borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF0F44B8).withAlpha(isDark ? 80 : 50),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-          ),
-        ],
+        border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.white.withAlpha(40),
-                  borderRadius: BorderRadius.circular(8),
+                  color: const Color(0xFF0F44B8),
+                  borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
-                  'MODULE ${_activeModule.moduleNumber} OF ${widget.course.modules.length}',
-                  style: GoogleFonts.inter(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.white,
-                    letterSpacing: 0.5,
-                  ),
+                  'MODULE ${_activeModule.moduleNumber}',
+                  style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w800, color: Colors.white),
                 ),
               ),
+              const Spacer(),
               Row(
                 children: [
-                  const Icon(Icons.timer_outlined, color: Colors.white70, size: 14),
+                  const Icon(Icons.schedule_rounded, size: 14, color: Colors.grey),
                   const SizedBox(width: 4),
                   Text(
                     _activeModule.duration,
-                    style: GoogleFonts.inter(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w600),
+                    style: GoogleFonts.inter(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.w600),
                   ),
                 ],
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
           Text(
             _activeModule.title,
             style: GoogleFonts.inter(
               fontSize: 18,
               fontWeight: FontWeight.w800,
-              color: Colors.white,
+              color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
             ),
           ),
-          const SizedBox(height: 6),
-          Text(
-            _activeModule.description,
-            style: GoogleFonts.inter(
-              fontSize: 12.5,
-              color: Colors.white.withAlpha(220),
-              height: 1.4,
+          if (_activeModule.description.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            Text(
+              _activeModule.description,
+              style: GoogleFonts.inter(
+                fontSize: 12.5,
+                color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                height: 1.4,
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
-          // Progress Bar
+          ],
+          const SizedBox(height: 14),
           Row(
             children: [
               Expanded(
@@ -300,7 +697,7 @@ class _CourseModuleScreenState extends State<CourseModuleScreen> {
                   borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
                     value: _activeModule.progress,
-                    backgroundColor: Colors.white.withAlpha(40),
+                    backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
                     valueColor: const AlwaysStoppedAnimation(Color(0xFF10B981)),
                     minHeight: 6,
                   ),
@@ -312,7 +709,7 @@ class _CourseModuleScreenState extends State<CourseModuleScreen> {
                 style: GoogleFonts.inter(
                   fontSize: 12,
                   fontWeight: FontWeight.w800,
-                  color: Colors.white,
+                  color: const Color(0xFF10B981),
                 ),
               ),
             ],
@@ -330,7 +727,7 @@ class _CourseModuleScreenState extends State<CourseModuleScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Video Lectures (${_activeModule.lectures.length})',
+              'Module Lectures (${_activeModule.lectures.length})',
               style: GoogleFonts.inter(
                 fontSize: 16,
                 fontWeight: FontWeight.w800,
@@ -338,235 +735,122 @@ class _CourseModuleScreenState extends State<CourseModuleScreen> {
               ),
             ),
             Text(
-              '${_activeModule.lectures.where((l) => l.isCompleted).length}/${_activeModule.lectures.length} Completed',
+              'Video & Notes',
               style: GoogleFonts.inter(
                 fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF10B981),
+                color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
               ),
             ),
           ],
         ),
         const SizedBox(height: 12),
 
-        ..._activeModule.lectures.map((lec) {
-          return Container(
-            margin: const EdgeInsets.only(bottom: 12),
+        if (_activeModule.lectures.isEmpty)
+          Container(
+            padding: const EdgeInsets.all(24),
+            alignment: Alignment.center,
             decoration: BoxDecoration(
               color: isDark ? AppColors.darkCardBg : Colors.white,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
-              ),
             ),
-            child: InkWell(
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => WatchLectureScreen(
-                      course: widget.course,
-                      module: _activeModule,
-                      initialLecture: lec,
-                    ),
-                  ),
-                );
-              },
-              borderRadius: BorderRadius.circular(16),
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Row(
-                  children: [
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Image.network(
-                            lec.previewThumbnail,
-                            width: 80,
-                            height: 60,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Container(width: 80, height: 60, color: Colors.grey),
-                          ),
-                        ),
-                        Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: Colors.black.withAlpha(160),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 20),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                'Lecture ${lec.lectureNumber}',
-                                style: GoogleFonts.inter(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w700,
-                                  color: const Color(0xFF0F44B8),
-                                ),
-                              ),
-                              const Spacer(),
-                              if (lec.isCompleted)
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF10B981).withAlpha(30),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: Text(
-                                    'COMPLETED',
-                                    style: GoogleFonts.inter(
-                                      fontSize: 9.5,
-                                      fontWeight: FontWeight.w800,
-                                      color: const Color(0xFF10B981),
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                          const SizedBox(height: 3),
-                          Text(
-                            lec.title,
-                            style: GoogleFonts.inter(
-                              fontSize: 13.5,
-                              fontWeight: FontWeight.w700,
-                              color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 4),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.access_time_rounded,
-                                size: 13,
-                                color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                lec.duration,
-                                style: GoogleFonts.inter(
-                                  fontSize: 11.5,
-                                  color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            child: Text(
+              'No video lectures posted for this module yet.',
+              style: GoogleFonts.inter(fontSize: 12.5, color: Colors.grey),
             ),
-          );
-        }),
-      ],
-    );
-  }
-
-  Widget _buildScormSection(bool isDark) {
-    final scorm = _activeModule.scormPackage!;
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: isDark
-              ? [const Color(0xFF1E293B), const Color(0xFF0F172A)]
-              : [const Color(0xFFEFF6FF), const Color(0xFFF8FAFC)],
-        ),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFF3B82F6).withAlpha(100)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF3B82F6).withAlpha(isDark ? 60 : 30),
+          )
+        else
+          ..._activeModule.lectures.map((lec) {
+            return Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.darkCardBg : Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
+              ),
+              child: ListTile(
+                contentPadding: const EdgeInsets.all(12),
+                leading: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(Icons.extension_rounded, color: Color(0xFF3B82F6), size: 22),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'SCORM 1.2 Digital Package',
-                      style: GoogleFonts.inter(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w800,
-                        color: const Color(0xFF3B82F6),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Image.network(
+                        lec.previewThumbnail,
+                        width: 70,
+                        height: 50,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(width: 70, height: 50, color: const Color(0xFF0F44B8)),
                       ),
-                    ),
-                    Text(
-                      scorm.title,
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                      Container(
+                        width: 26,
+                        height: 26,
+                        decoration: BoxDecoration(
+                          color: Colors.black.withAlpha(150),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 18),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Text(
-            scorm.description,
-            style: GoogleFonts.inter(
-              fontSize: 12,
-              color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
-            ),
-          ),
-          const SizedBox(height: 14),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => ScormPlayerScreen(
-                      course: widget.course,
-                      module: _activeModule,
-                      scormPackage: scorm,
-                    ),
+                    ],
                   ),
-                );
-              },
-              icon: const Icon(Icons.play_circle_outline_rounded, size: 18),
-              label: Text(
-                scorm.status == 'Completed' ? 'Replay SCORM Module' : 'Launch Interactive SCORM Player',
-                style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 13),
+                ),
+                title: Text(
+                  'Lecture ${lec.lectureNumber}: ${lec.title}',
+                  style: GoogleFonts.inter(
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w700,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                subtitle: Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.schedule_rounded, size: 12, color: Colors.grey),
+                      const SizedBox(width: 4),
+                      Text(lec.duration, style: GoogleFonts.inter(fontSize: 11.5, color: Colors.grey)),
+                      const SizedBox(width: 10),
+                      if (lec.isCompleted)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF10B981).withAlpha(30),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            'Completed',
+                            style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w800, color: const Color(0xFF10B981)),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                trailing: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => WatchLectureScreen(
+                          course: widget.course,
+                          module: _activeModule,
+                          initialLecture: lec,
+                        ),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0F44B8),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    textStyle: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w700),
+                  ),
+                  child: const Text('Watch'),
+                ),
               ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF3B82F6),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-            ),
-          ),
-        ],
-      ),
+            );
+          }),
+      ],
     );
   }
 
@@ -575,7 +859,7 @@ class _CourseModuleScreenState extends State<CourseModuleScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Module Quizzes & Assessments',
+          'Quizzes & Assessment',
           style: GoogleFonts.inter(
             fontSize: 16,
             fontWeight: FontWeight.w800,
@@ -611,18 +895,15 @@ class _CourseModuleScreenState extends State<CourseModuleScreen> {
                       Text(
                         quiz.title,
                         style: GoogleFonts.inter(
-                          fontSize: 14,
+                          fontSize: 13.5,
                           fontWeight: FontWeight.w700,
                           color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
                         ),
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        '${quiz.questionCount} Questions • ${quiz.timeLimitMinutes} Mins • Pass: ${quiz.passingScore}%',
-                        style: GoogleFonts.inter(
-                          fontSize: 11.5,
-                          color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
-                        ),
+                        '${quiz.questionCount} Questions • ${quiz.timeLimitMinutes} mins • Pass: ${quiz.passingScore}%',
+                        style: GoogleFonts.inter(fontSize: 11.5, color: Colors.grey),
                       ),
                     ],
                   ),
@@ -631,94 +912,33 @@ class _CourseModuleScreenState extends State<CourseModuleScreen> {
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (_) => QuizScreen(title: quiz.title),
+                        builder: (_) => QuizScreen(title: '${widget.course.title} Quiz'),
                       ),
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0F44B8),
+                    backgroundColor: const Color(0xFFF59E0B),
                     foregroundColor: Colors.white,
-                    textStyle: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700),
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    textStyle: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w700),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   ),
-                  child: Text(quiz.isCompleted ? 'Retry' : 'Attempt'),
+                  child: Text(quiz.isCompleted ? 'Retake' : 'Start'),
                 ),
               ],
             ),
           );
         }),
-
-        if (_activeModule.assessmentTest != null)
-          Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: isDark ? AppColors.darkCardBg : Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFF10B981).withAlpha(120)),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF10B981).withAlpha(isDark ? 50 : 25),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(Icons.assignment_turned_in_rounded, color: Color(0xFF10B981), size: 22),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        _activeModule.assessmentTest!.title,
-                        style: GoogleFonts.inter(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        'Total Marks: ${_activeModule.assessmentTest!.totalMarks} • Due: ${_activeModule.assessmentTest!.dueDate}',
-                        style: GoogleFonts.inter(
-                          fontSize: 11.5,
-                          color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Starting ${_activeModule.assessmentTest!.title}...')),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF10B981),
-                    foregroundColor: Colors.white,
-                    textStyle: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700),
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  ),
-                  child: const Text('Start Test'),
-                ),
-              ],
-            ),
-          ),
       ],
     );
   }
 
-  Widget _buildResourcesSection(bool isDark) {
+  Widget _buildModuleHandoutsSection(bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Handouts & Presentations (${_activeModule.resources.length})',
+          'Module Handouts (${_activeModule.resources.length})',
           style: GoogleFonts.inter(
             fontSize: 16,
             fontWeight: FontWeight.w800,
@@ -764,17 +984,14 @@ class _CourseModuleScreenState extends State<CourseModuleScreen> {
                       const SizedBox(height: 2),
                       Text(
                         '${res.type} • ${res.fileSize} • ${res.pages} Pages',
-                        style: GoogleFonts.inter(
-                          fontSize: 11.5,
-                          color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
-                        ),
+                        style: GoogleFonts.inter(fontSize: 11.5, color: Colors.grey),
                       ),
                     ],
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.remove_red_eye_rounded, color: Color(0xFF6366F1)),
-                  tooltip: 'View in App',
+                  icon: const Icon(Icons.remove_red_eye_rounded, color: Color(0xFF0F44B8)),
+                  tooltip: 'View',
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
@@ -791,6 +1008,249 @@ class _CourseModuleScreenState extends State<CourseModuleScreen> {
           );
         }),
       ],
+    );
+  }
+
+  Widget _buildBottomNavToolbar(bool isDark) {
+    final hasPrev = !_showingCourseResources && _activeModuleIndex > 0;
+    final hasNext = !_showingCourseResources && _activeModuleIndex < widget.course.modules.length - 1;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        border: Border(
+          top: BorderSide(
+            color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+          ),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(isDark ? 30 : 10),
+            blurRadius: 6,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Previous Module Arrow Button
+            OutlinedButton.icon(
+              onPressed: hasPrev
+                  ? () => _selectModule(_activeModuleIndex - 1)
+                  : (_showingCourseResources && widget.course.modules.isNotEmpty
+                      ? () => _selectModule(0)
+                      : null),
+              icon: const Icon(Icons.arrow_back_ios_rounded, size: 14),
+              label: const Text('Previous'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: isDark ? Colors.white : Colors.black87,
+                disabledForegroundColor: Colors.grey.withAlpha(100),
+                side: BorderSide(
+                  color: hasPrev || (_showingCourseResources && widget.course.modules.isNotEmpty)
+                      ? (isDark ? AppColors.darkBorder : AppColors.lightBorder)
+                      : Colors.transparent,
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                textStyle: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700),
+              ),
+            ),
+
+            // Resources Shortcut Pill
+            InkWell(
+              onTap: _showResourcesView,
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                decoration: BoxDecoration(
+                  color: _showingCourseResources
+                      ? const Color(0xFF0F44B8)
+                      : (isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9)),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.folder_open_rounded,
+                      size: 16,
+                      color: _showingCourseResources
+                          ? Colors.white
+                          : (isDark ? Colors.white70 : const Color(0xFF0F44B8)),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Resources',
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: _showingCourseResources
+                            ? Colors.white
+                            : (isDark ? Colors.white70 : const Color(0xFF0F44B8)),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // Next Module Arrow Button
+            ElevatedButton.icon(
+              onPressed: _showingCourseResources
+                  ? () => _selectModule(0)
+                  : (hasNext ? () => _selectModule(_activeModuleIndex + 1) : null),
+              icon: const Text('Next'),
+              label: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF0F44B8),
+                foregroundColor: Colors.white,
+                disabledBackgroundColor: Colors.grey.withAlpha(50),
+                disabledForegroundColor: Colors.grey,
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                textStyle: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModuleDrawer(bool isDark) {
+    return Drawer(
+      backgroundColor: isDark ? AppColors.darkCardBg : Colors.white,
+      child: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.course.title,
+                    style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w800),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Course Navigation',
+                    style: GoogleFonts.inter(fontSize: 12, color: Colors.grey),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+
+            // Course Resources Entry
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0F44B8).withAlpha(30),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.folder_open_rounded, color: Color(0xFF0F44B8), size: 20),
+              ),
+              title: Text(
+                'Course Resources',
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  fontWeight: _showingCourseResources ? FontWeight.w800 : FontWeight.w600,
+                  color: _showingCourseResources ? const Color(0xFF0F44B8) : null,
+                ),
+              ),
+              subtitle: Text(
+                '${widget.course.resources.length} textbooks & handouts',
+                style: GoogleFonts.inter(fontSize: 11.5, color: Colors.grey),
+              ),
+              trailing: const Icon(Icons.chevron_right_rounded, size: 20),
+              selected: _showingCourseResources,
+              selectedTileColor: const Color(0xFF0F44B8).withAlpha(15),
+              onTap: () {
+                Navigator.pop(context);
+                _showResourcesView();
+              },
+            ),
+
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Text(
+                'MODULES',
+                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Colors.grey, letterSpacing: 1),
+              ),
+            ),
+
+            // Modules list
+            Expanded(
+              child: ListView.builder(
+                itemCount: widget.course.modules.length,
+                itemBuilder: (ctx, idx) {
+                  final mod = widget.course.modules[idx];
+                  final isCurrent = !_showingCourseResources && _activeModuleIndex == idx;
+
+                  return ListTile(
+                    leading: CircleAvatar(
+                      radius: 14,
+                      backgroundColor: isCurrent ? const Color(0xFF0F44B8) : Colors.grey.withAlpha(40),
+                      child: Text(
+                        '${mod.moduleNumber}',
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                          color: isCurrent ? Colors.white : (isDark ? Colors.white70 : Colors.black87),
+                        ),
+                      ),
+                    ),
+                    title: Text(
+                      mod.title,
+                      style: GoogleFonts.inter(
+                        fontSize: 13.5,
+                        fontWeight: isCurrent ? FontWeight.w800 : FontWeight.w600,
+                        color: isCurrent ? const Color(0xFF0F44B8) : null,
+                      ),
+                    ),
+                    subtitle: Text(
+                      '${mod.lectures.length} Lectures • ${mod.duration}',
+                      style: GoogleFonts.inter(fontSize: 11, color: Colors.grey),
+                    ),
+                    trailing: const Icon(Icons.chevron_right_rounded, size: 20),
+                    selected: isCurrent,
+                    selectedTileColor: const Color(0xFF0F44B8).withAlpha(15),
+                    onTap: () {
+                      Navigator.pop(context);
+                      _selectModule(idx);
+                    },
+                  );
+                },
+              ),
+            ),
+
+            // Bottom instructor button
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _showInstructorProfile();
+                  },
+                  icon: const Icon(Icons.person_rounded, size: 16),
+                  label: const Text('Instructor Profile'),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

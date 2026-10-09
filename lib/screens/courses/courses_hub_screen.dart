@@ -5,7 +5,7 @@ import '../../models/mock_courses_data.dart';
 import '../../theme/app_theme.dart';
 import 'course_detail_screen.dart';
 import 'course_module_screen.dart';
-import 'scorm_player_screen.dart';
+import 'pdf_viewer_screen.dart';
 
 class CoursesHubScreen extends StatefulWidget {
   final int initialTabIndex;
@@ -75,7 +75,7 @@ class _CoursesHubScreenState extends State<CoursesHubScreen> with SingleTickerPr
           tabs: const [
             Tab(text: 'Enrolled Courses'),
             Tab(text: 'Explore Catalog'),
-            Tab(text: 'SCORM Packages'),
+            Tab(text: 'Course Resources'),
           ],
         ),
       ),
@@ -146,7 +146,7 @@ class _CoursesHubScreenState extends State<CoursesHubScreen> with SingleTickerPr
                 children: [
                   _buildEnrolledTab(isDark),
                   _buildCatalogTab(isDark),
-                  _buildScormTab(isDark),
+                  _buildResourcesTab(isDark),
                 ],
               ),
             ),
@@ -416,99 +416,161 @@ class _CoursesHubScreenState extends State<CoursesHubScreen> with SingleTickerPr
     );
   }
 
-  Widget _buildScormTab(bool isDark) {
-    final scormCourses = _filteredCourses.where((c) => c.hasScorm).toList();
+  Widget _buildResourcesTab(bool isDark) {
+    // Collect all resources from filtered courses
+    final List<Map<String, dynamic>> allResources = [];
+    for (final course in _filteredCourses) {
+      for (final res in course.resources) {
+        allResources.add({'course': course, 'resource': res});
+      }
+    }
+
+    if (allResources.isEmpty) {
+      return Center(
+        child: Text(
+          'No resources found for the selected filter.',
+          style: GoogleFonts.inter(color: isDark ? Colors.white60 : Colors.black54),
+        ),
+      );
+    }
 
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-      itemCount: scormCourses.length,
+      itemCount: allResources.length,
       itemBuilder: (context, index) {
-        final course = scormCourses[index];
-        final scormModule = course.modules.firstWhere((m) => m.scormPackage != null, orElse: () => course.modules.first);
-        final scorm = scormModule.scormPackage;
+        final item = allResources[index];
+        final LmsCourse course = item['course'];
+        final LmsResource res = item['resource'];
+
+        IconData iconData = Icons.picture_as_pdf_rounded;
+        Color badgeColor = const Color(0xFF6366F1);
+
+        if (res.type.toLowerCase().contains('book')) {
+          iconData = Icons.menu_book_rounded;
+          badgeColor = const Color(0xFF0F44B8);
+        } else if (res.type.toLowerCase().contains('presentation')) {
+          iconData = Icons.slideshow_rounded;
+          badgeColor = const Color(0xFFE11D48);
+        } else if (res.type.toLowerCase().contains('study')) {
+          iconData = Icons.library_books_rounded;
+          badgeColor = const Color(0xFF10B981);
+        }
 
         return Container(
-          margin: const EdgeInsets.only(bottom: 16),
+          margin: const EdgeInsets.only(bottom: 14),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: isDark
-                  ? [const Color(0xFF1E293B), const Color(0xFF0F172A)]
-                  : [const Color(0xFFEFF6FF), const Color(0xFFF8FAFC)],
-            ),
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: const Color(0xFF3B82F6).withAlpha(120)),
+            color: isDark ? AppColors.darkCardBg : Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF3B82F6).withAlpha(isDark ? 60 : 30),
+                      color: badgeColor.withAlpha(isDark ? 50 : 25),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(Icons.extension_rounded, color: Color(0xFF3B82F6), size: 24),
+                    child: Icon(iconData, color: badgeColor, size: 24),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 14),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'SCORM 1.2 DIGITAL MODULE',
-                          style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w800, color: const Color(0xFF3B82F6)),
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: badgeColor.withAlpha(isDark ? 40 : 20),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                res.type.toUpperCase(),
+                                style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w800, color: badgeColor),
+                              ),
+                            ),
+                            const Spacer(),
+                            Text(
+                              res.fileSize,
+                              style: GoogleFonts.inter(fontSize: 11, color: Colors.grey, fontWeight: FontWeight.w600),
+                            ),
+                          ],
                         ),
+                        const SizedBox(height: 6),
                         Text(
-                          course.title,
+                          res.title,
                           style: GoogleFonts.inter(
                             fontSize: 14.5,
                             fontWeight: FontWeight.w700,
                             color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
                           ),
                         ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Course: ${course.title}',
+                          style: GoogleFonts.inter(fontSize: 12, color: const Color(0xFF0F44B8), fontWeight: FontWeight.w600),
+                        ),
                       ],
                     ),
                   ),
                 ],
               ),
+              const SizedBox(height: 12),
+              const Divider(height: 1),
               const SizedBox(height: 10),
-              Text(
-                scorm?.description ?? 'Interactive safety and instructional design SCORM simulation.',
-                style: GoogleFonts.inter(
-                  fontSize: 12,
-                  color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
-                ),
-              ),
-              const SizedBox(height: 14),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    if (scorm != null) {
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  OutlinedButton.icon(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Downloading "${res.title}" (${res.fileSize})...'),
+                          backgroundColor: const Color(0xFF10B981),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.download_rounded, size: 16),
+                    label: const Text('DOWNLOAD'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: isDark ? Colors.white70 : Colors.black87,
+                      side: BorderSide(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      textStyle: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton.icon(
+                    onPressed: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (_) => ScormPlayerScreen(
-                            course: course,
-                            module: scormModule,
-                            scormPackage: scorm,
+                          builder: (_) => PdfViewerScreen(
+                            resource: res,
+                            courseTitle: course.title,
                           ),
                         ),
                       );
-                    }
-                  },
-                  icon: const Icon(Icons.play_circle_fill_rounded, size: 18),
-                  label: const Text('Play Interactive SCORM Package'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF3B82F6),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    textStyle: GoogleFonts.inter(fontWeight: FontWeight.w700),
+                    },
+                    icon: const Icon(Icons.visibility_rounded, size: 16),
+                    label: const Text('VIEW'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF0F44B8),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      textStyle: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w700),
+                    ),
                   ),
-                ),
+                ],
               ),
             ],
           ),
