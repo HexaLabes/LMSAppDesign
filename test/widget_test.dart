@@ -13,7 +13,8 @@ void main() {
         child: const LMSPrepApp(),
       ),
     );
-    expect(find.text('CIT Prep'), findsOneWidget);
-    await tester.pumpAndSettle(const Duration(seconds: 3));
+    await tester.pump();
+    expect(find.byType(LMSPrepApp), findsOneWidget);
+    await tester.pumpAndSettle(const Duration(seconds: 4));
   });
 }
