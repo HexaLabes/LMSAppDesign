@@ -323,13 +323,16 @@ class _CourseProgressScreenState extends State<CourseProgressScreen> with Single
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(r.course, style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w700)),
-                    Text('Date: ${r.date} • Mode: ${r.deliveryMode}', style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                  ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(r.course, style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w700), maxLines: 1, overflow: TextOverflow.ellipsis),
+                      Text('Date: ${r.date} • Mode: ${r.deliveryMode}', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                    ],
+                  ),
                 ),
+                const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(

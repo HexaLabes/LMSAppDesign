@@ -600,9 +600,11 @@ class _ResultsScreenState extends State<ResultsScreen> with SingleTickerProvider
                       children: [
                         const Icon(Icons.info_outline, size: 18, color: Colors.grey),
                         const SizedBox(width: 8),
-                        Text(
-                          'No published exam results found for this course.',
-                          style: GoogleFonts.inter(fontSize: 12.5, color: Colors.grey),
+                        Expanded(
+                          child: Text(
+                            'No published exam results found for this course.',
+                            style: GoogleFonts.inter(fontSize: 12.5, color: Colors.grey),
+                          ),
                         ),
                       ],
                     ),

@@ -40,25 +40,27 @@ class CourseTimingsScreen extends StatelessWidget {
                 children: [
                   const Icon(Icons.schedule_rounded, color: Colors.white, size: 24),
                   const SizedBox(width: 12),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'COURSE TIMINGS',
-                        style: GoogleFonts.inter(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'COURSE TIMINGS',
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      Text(
-                        'Class schedules, time shifts, and batch durations',
-                        style: GoogleFonts.inter(
-                          fontSize: 11.5,
-                          color: Colors.white.withAlpha(210),
+                        Text(
+                          'Class schedules, time shifts, and batch durations',
+                          style: GoogleFonts.inter(
+                            fontSize: 11.5,
+                            color: Colors.white.withAlpha(210),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),

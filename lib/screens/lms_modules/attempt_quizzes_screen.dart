@@ -96,25 +96,27 @@ class AttemptQuizzesScreen extends StatelessWidget {
                 children: [
                   const Icon(Icons.dvr_rounded, color: Colors.white, size: 24),
                   const SizedBox(width: 12),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'ATTEMPT QUIZZES',
-                        style: GoogleFonts.inter(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'ATTEMPT QUIZZES',
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      Text(
-                        'Test knowledge with modular course quizzes',
-                        style: GoogleFonts.inter(
-                          fontSize: 11.5,
-                          color: Colors.white.withAlpha(210),
+                        Text(
+                          'Test knowledge with modular course quizzes',
+                          style: GoogleFonts.inter(
+                            fontSize: 11.5,
+                            color: Colors.white.withAlpha(210),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -210,22 +212,29 @@ class AttemptQuizzesScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         if (isDone && q['score'] != null)
-                          Text(
-                            'Score: ${q['score']}',
-                            style: GoogleFonts.inter(
-                              fontSize: 13.5,
-                              fontWeight: FontWeight.w800,
-                              color: const Color(0xFF10B981),
+                          Expanded(
+                            child: Text(
+                              'Score: ${q['score']}',
+                              style: GoogleFonts.inter(
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.w800,
+                                color: const Color(0xFF10B981),
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           )
                         else
-                          Text(
-                            'Not attempted yet',
-                            style: GoogleFonts.inter(
-                              fontSize: 12.5,
-                              color: isDark ? AppColors.darkTextMuted : AppColors.lightTextMuted,
+                          Expanded(
+                            child: Text(
+                              'Not attempted yet',
+                              style: GoogleFonts.inter(
+                                fontSize: 12.5,
+                                color: isDark ? AppColors.darkTextMuted : AppColors.lightTextMuted,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
+                        const SizedBox(width: 8),
                         ElevatedButton.icon(
                           onPressed: () {
                             Navigator.push(

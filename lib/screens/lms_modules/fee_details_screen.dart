@@ -49,26 +49,28 @@ class FeeDetailsScreen extends StatelessWidget {
                   children: [
                     const Icon(Icons.account_balance_wallet_rounded, color: Colors.white, size: 24),
                     const SizedBox(width: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'FEE DETAILS',
-                          style: GoogleFonts.inter(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
-                            letterSpacing: 0.5,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'FEE DETAILS',
+                            style: GoogleFonts.inter(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                              letterSpacing: 0.5,
+                            ),
                           ),
-                        ),
-                        Text(
-                          'Review tuition, due dates, instalments and balances',
-                          style: GoogleFonts.inter(
-                            fontSize: 11.5,
-                            color: Colors.white.withAlpha(210),
+                          Text(
+                            'Review tuition, due dates, instalments and balances',
+                            style: GoogleFonts.inter(
+                              fontSize: 11.5,
+                              color: Colors.white.withAlpha(210),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),

@@ -95,25 +95,27 @@ class _StudentFeedbackScreenState extends State<StudentFeedbackScreen> {
                   children: [
                     const Icon(Icons.rate_review_rounded, color: Colors.white, size: 24),
                     const SizedBox(width: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'STUDENT FEEDBACK FORM',
-                          style: GoogleFonts.inter(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'STUDENT FEEDBACK FORM',
+                            style: GoogleFonts.inter(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                            ),
                           ),
-                        ),
-                        Text(
-                          'Share feedback regarding course quality & trainer',
-                          style: GoogleFonts.inter(
-                            fontSize: 11.5,
-                            color: Colors.white.withAlpha(210),
+                          Text(
+                            'Share feedback regarding course quality & trainer',
+                            style: GoogleFonts.inter(
+                              fontSize: 11.5,
+                              color: Colors.white.withAlpha(210),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),

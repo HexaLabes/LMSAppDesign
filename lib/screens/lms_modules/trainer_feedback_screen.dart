@@ -78,25 +78,27 @@ class _TrainerFeedbackScreenState extends State<TrainerFeedbackScreen> {
                   children: [
                     const Icon(Icons.assignment_turned_in_rounded, color: Colors.white, size: 24),
                     const SizedBox(width: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'TRAINER FEEDBACK RESPONSE',
-                          style: GoogleFonts.inter(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'TRAINER FEEDBACK RESPONSE',
+                            style: GoogleFonts.inter(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                            ),
                           ),
-                        ),
-                        Text(
-                          'View evaluation, remarks & guidance from your trainer',
-                          style: GoogleFonts.inter(
-                            fontSize: 11.5,
-                            color: Colors.white.withAlpha(210),
+                          Text(
+                            'View evaluation, remarks & guidance from your trainer',
+                            style: GoogleFonts.inter(
+                              fontSize: 11.5,
+                              color: Colors.white.withAlpha(210),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -210,10 +212,11 @@ class _TrainerFeedbackScreenState extends State<TrainerFeedbackScreen> {
                     ...(feedback['strengths'] as List<String>).map((s) => Padding(
                           padding: const EdgeInsets.only(bottom: 4),
                           child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Icon(Icons.check_circle_rounded, size: 16, color: Color(0xFF10B981)),
                               const SizedBox(width: 6),
-                              Text(s, style: const TextStyle(fontSize: 13)),
+                              Expanded(child: Text(s, style: const TextStyle(fontSize: 13))),
                             ],
                           ),
                         )),
@@ -227,10 +230,11 @@ class _TrainerFeedbackScreenState extends State<TrainerFeedbackScreen> {
                     ...(feedback['improvements'] as List<String>).map((imp) => Padding(
                           padding: const EdgeInsets.only(bottom: 4),
                           child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Icon(Icons.arrow_forward_rounded, size: 16, color: Color(0xFFE95D34)),
                               const SizedBox(width: 6),
-                              Text(imp, style: const TextStyle(fontSize: 13)),
+                              Expanded(child: Text(imp, style: const TextStyle(fontSize: 13))),
                             ],
                           ),
                         )),

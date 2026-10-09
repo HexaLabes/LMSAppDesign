@@ -67,12 +67,12 @@ class AttendanceScreen extends StatelessWidget {
                     style: GoogleFonts.inter(fontSize: 13, color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary),
                   ),
                   const SizedBox(height: 14),
-                  Row(
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
                     children: [
                       _buildMiniBadge('Present: $presentCount', const Color(0xFF10B981)),
-                      const SizedBox(width: 8),
                       _buildMiniBadge('Absent: $absentCount', const Color(0xFFEF4444)),
-                      const SizedBox(width: 8),
                       _buildMiniBadge('Leave: $leaveCount', const Color(0xFFF59E0B)),
                     ],
                   ),

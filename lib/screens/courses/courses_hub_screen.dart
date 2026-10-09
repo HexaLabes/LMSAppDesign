@@ -292,10 +292,14 @@ class _CoursesHubScreenState extends State<CoursesHubScreen> with SingleTickerPr
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            '${course.modulesCount} Modules • ${course.lecturesCount} Lectures',
-                            style: GoogleFonts.inter(fontSize: 11.5, color: Colors.grey),
+                          Expanded(
+                            child: Text(
+                              '${course.modulesCount} Modules • ${course.lecturesCount} Lectures',
+                              style: GoogleFonts.inter(fontSize: 11.5, color: Colors.grey),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
+                          const SizedBox(width: 8),
                           ElevatedButton.icon(
                             onPressed: () {
                               Navigator.of(context).push(

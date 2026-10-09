@@ -75,25 +75,27 @@ class AssessmentTestScreen extends StatelessWidget {
                 children: [
                   const Icon(Icons.assignment_turned_in_rounded, color: Colors.white, size: 24),
                   const SizedBox(width: 12),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'ASSESSMENT TESTS',
-                        style: GoogleFonts.inter(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'ASSESSMENT TESTS',
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      Text(
-                        'Formal examinations, mid-terms, and certification assessments',
-                        style: GoogleFonts.inter(
-                          fontSize: 11.5,
-                          color: Colors.white.withAlpha(210),
+                        Text(
+                          'Formal examinations, mid-terms, and certification assessments',
+                          style: GoogleFonts.inter(
+                            fontSize: 11.5,
+                            color: Colors.white.withAlpha(210),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -199,19 +201,17 @@ class AssessmentTestScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              isDone ? 'Result: ${test['obtained']} (${test['grade']})' : '${test['grade']}',
-                              style: GoogleFonts.inter(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w800,
-                                color: isDone ? const Color(0xFF10B981) : const Color(0xFF0F44B8),
-                              ),
+                        Expanded(
+                          child: Text(
+                            isDone ? 'Result: ${test['obtained']} (${test['grade']})' : '${test['grade']}',
+                            style: GoogleFonts.inter(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w800,
+                              color: isDone ? const Color(0xFF10B981) : const Color(0xFF0F44B8),
                             ),
-                          ],
+                          ),
                         ),
+                        const SizedBox(width: 8),
                         ElevatedButton.icon(
                           onPressed: () {
                             Navigator.push(

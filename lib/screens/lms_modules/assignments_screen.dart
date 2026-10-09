@@ -107,25 +107,27 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
                 children: [
                   const Icon(Icons.assignment_rounded, color: Colors.white, size: 24),
                   const SizedBox(width: 12),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'COURSE ASSIGNMENTS',
-                        style: GoogleFonts.inter(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'COURSE ASSIGNMENTS',
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      Text(
-                        'Submit homework, download briefs, and check marks',
-                        style: GoogleFonts.inter(
-                          fontSize: 11.5,
-                          color: Colors.white.withAlpha(210),
+                        Text(
+                          'Submit homework, download briefs, and check marks',
+                          style: GoogleFonts.inter(
+                            fontSize: 11.5,
+                            color: Colors.white.withAlpha(210),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -156,12 +158,16 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
                         children: [
                           const Icon(Icons.school_rounded, color: Colors.white, size: 18),
                           const SizedBox(width: 8),
-                          Text(
-                            asg.courseTitle,
-                            style: GoogleFonts.inter(
-                              color: Colors.white,
-                              fontSize: 13.5,
-                              fontWeight: FontWeight.w700,
+                          Expanded(
+                            child: Text(
+                              asg.courseTitle,
+                              style: GoogleFonts.inter(
+                                color: Colors.white,
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
@@ -305,12 +311,15 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
                                   ),
                                 ),
                               if (asg.status == 'Submitted' || asg.status == 'Checked')
-                                Text(
-                                  'File: ${asg.submissionFile ?? "Uploaded"}',
-                                  style: GoogleFonts.inter(
-                                    fontSize: 11.5,
-                                    color: const Color(0xFF10B981),
-                                    fontWeight: FontWeight.w600,
+                                Flexible(
+                                  child: Text(
+                                    'File: ${asg.submissionFile ?? "Uploaded"}',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 11.5,
+                                      color: const Color(0xFF10B981),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                             ],
